@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siraj | Social Media Accounts</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 15px;
+      overflow-x: hidden; /* Prevent horizontal scroll */
+      min-height: 100vh;
+      position: relative;
+
+      /* Updated Gradient for the new shiny effect */
+      background: linear-gradient(
+        to bottom,
+        #a020f0 0%,          /* A vibrant, shiny purple */
+        #6e26b2 30%,         /* A darker mid-point purple */
+        #340f6c 70%,         /* A deep, dark purple */
+        #1a0833 100%         /* Almost black, for a deep base */
+      );
+    }
+
+    /* Background Image (placed behind everything) */
+    .background-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -3;
+        opacity: 0.1;
+        background-image: url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        pointer-events: none;
+    }
+
+    body.loading .profile-pic,
+    body.loading h1,
+    body.loading .tagline,
+    body.loading .links,
+    body.loading footer {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Specific Video Container for the Red Box Area */
+    .red-box-video-container {
+        position: fixed; /* Anchors the video to a specific place on the screen */
+        bottom: 50px; /* Position it above the footer */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 400px;
+        height: 150px;
+        border-radius: 10px;
+        overflow: hidden;
+        z-index: -1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .red-box-video-container video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translate(-50%, -50%);
+        object-fit: cover;
+        opacity: 0.2;
+    }
+
+    /* Gradient overlay for blending video edges *within* the container */
+    .red-box-video-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #eee;
+      margin-bottom: 15px;
+      transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: opacity 1s ease-in-out 0.2s, transform 1s ease-in-out 0.2s;
+    }
+
+    p.tagline {
+      margin: 5px 0 25px;
+      font-size: 14px;
+      color: #ccc;
+      transition: opacity 1s ease-in-out 0.4s, transform 1s ease-in-out 0.4s;
+    }
+
+    .links {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: opacity 1s ease-in-out 0.6s, transform 1s ease-in-out 0.6s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: background 0.2s ease, transform 0.1s ease,
+                  top 0.5s ease, left 0.5s ease, rotate 0.5s ease;
+    }
+
+    .link-btn a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .link-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .link-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .share-icon {
+      font-size: 24px;
+      cursor: pointer;
+      color: #ccc;
+      line-height: 1;
+    }
+
+    .link-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      padding: 15px 0;
+      font-size: 12px;
+      color: #888;
+      transition: opacity 1s ease-in-out 0.8s, transform 1s ease-in-out 0.8s;
+      z-index: 10;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      25% { transform: translateY(-5px) rotate(-2deg); }
+      50% { transform: translateY(0) rotate(0); }
+      75% { transform: translateY(-5px) rotate(2deg); }
+    }
+
+    .link-btn.shaking {
+      animation: bounce 0.5s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      font-size: 20px;
+      animation: twinkle 1s ease-out forwards;
+      opacity: 0;
+    }
+
+    .star::before {
+      content: '★';
+      color: transparent;
+      text-shadow: 
+        0 0 3px #fff,
+        0 0 6px #fff,
+        0 0 9px #fff,
+        0 0 12px #fff;
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.0) translateY(-15px);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.7) translateY(-30px);
+      }
+    }
+
+    /* Page Flip Container */
+    .flip-container {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        perspective: 1000px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .flipper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 550px; /* Increased to ensure all text fits */
+    }
+
+    .flip-container.flipped .flipper {
+        transform: rotateY(180deg);
+    }
+
+    .front, .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+    }
+
+    /* New z-index logic to control visibility */
+    .front {
+        z-index: 2; /* Ensure front is on top by default */
+    }
+
+    .back {
+        z-index: 1; /* Ensure back is below front by default */
+        transform: rotateY(180deg);
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        padding: 60px 20px 20px; /* Increased top padding to push content down */
+        box-sizing: border-box;
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+    }
+
+    .flip-container.flipped .front {
+        z-index: 1; /* Move front behind back on flip */
+    }
+
+    .flip-container.flipped .back {
+        z-index: 2; /* Move back to the front on flip */
+    }
+
+    .back h2, .back p {
+        margin: 0;
+        text-align: center;
+    }
+
+    .back h2 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+    .back .title {
+        font-size: 16px;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+    .back .bio-text {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #eee;
+        text-align: center; 
+    }
+
+    /* New button for the flip effect */
+    .flip-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .flip-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="loading">
+
+  <div class="background-image"></div>
+
+  <div class="flip-btn" id="flip-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+    </svg>
+  </div>
+
+  <div class="flip-container" id="flip-container">
+    <div class="flipper">
+      <div class="front">
+        <img class="profile-pic" src="profile.jpg" alt="Profile Picture">
+        <h1>Siraj Pathan</h1>
+        <p class="tagline">Social Media Accounts 🔗</p>
+        <div class="links">
+          <div class="link-btn">
+            <div class="link-content">
+              <img src="insta.png" alt="Instagram" class="link-icon"> <a href="https://www.instagram.com/pathansiraj_?igsh=YXp3MnRiMHZ6dG40" target="_blank">Instagram</a>
+            </div>
+            <span class="share-icon" data-title="Siraj's Instagram" data-url="https://www.instagram.com/pathansiraj_?igsh=YXp3MnRiMHZ6dG40" data-text="Check out Siraj's Instagram profile!">⋮</span>
+          </div>
+          <div class="link-btn">
+            <div class="link-content">
+              <img src="discord.png" alt="Discord" class="link-icon"> <a href="https://discord.gg/HeRrkmST" target="_blank">Discord</a>
+            </div>
+            <span class="share-icon" data-title="Siraj's Discord" data-url="https://discord.gg/HeRrkmST" data-text="Join Siraj's Discord server!">⋮</span>
+          </div>
+          <div class="link-btn">
+            <div class="link-content">
+              <img src="twitter.jpg" alt="Twitter" class="link-icon"> <a href="https://x.com/Pathansiraj_?t=KqX-P4m2jXfiuYE0lgLo4Q&s=09" target="_blank">Twitter</a>
+            </div>
+            <span class="share-icon" data-title="Siraj's Twitter" data-url="https://x.com/Pathansiraj_?t=KqX-P4m2jXfiuYE0lgLo4Q&s=09" data-text="Follow Siraj on Twitter!">⋮</span>
+          </div>
+          <div class="link-btn">
+            <div class="link-content">
+              <img src="linkedin.png" alt="LinkedIn" class="link-icon"> <a href="https://www.linkedin.com/in/siraj-pathan-99819320b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank">LinkedIn</a>
+            </div>
+            <span class="share-icon" data-title="Siraj's LinkedIn" data-url="https://www.linkedin.com/in/siraj-pathan-99819320b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" data-text="Connect with Siraj on LinkedIn!">⋮</span>
+          </div>
+          <div class="link-btn">
+            <div class="link-content">
+              <img src="snapchat.png" alt="Snapchat" class="link-icon"> <a href="https://www.snapchat.com/add/pathan_sirajjj?share_id=_-Yb2qygqG8&locale=en-GB" target="_blank">Snapchat</a>
+            </div>
+            <span class="share-icon" data-title="Siraj's Snapchat" data-url="https://www.snapchat.com/add/pathan_sirajjj?share_id=_-Yb2qygqG8&locale=en-GB" data-text="Add Siraj on Snapchat!">⋮</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="back">
+        <h2>Siraj Pathan</h2>
+        <p class="title">Oracle Fusion Cloud Engineer</p>
+        <p class="bio-text">
+          I’m an Oracle Fusion Cloud Engineer specializing in CX Sales & Service, Subscription Management, Product Information Management (PIM), Oracle Field Service Cloud (OFSC), and Configure-Price-Quote (CPQ). With hands-on experience in implementation, configuration, and end-to-end integrations, I help organizations deliver seamless customer experiences and optimize their digital transformation journey.
+        </p>
+        <p class="bio-text">
+          I’m passionate about leveraging Oracle Cloud applications to streamline customer engagement, automate workflows, and simplify complex sales processes. My focus is always on creating scalable, user-friendly, and efficient solutions that bridge business needs with advanced cloud technologies.
+        </p>
+        <p class="bio-text">
+          Outside of work, I love exploring new features in Oracle Cloud, building automation scripts, and sharing insights to help businesses unlock the full potential of their cloud systems.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="red-box-video-container">
+    <video autoplay loop muted playsinline>
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <footer>
+    © 2025 Siraj Pathan | Made with ❤️
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
